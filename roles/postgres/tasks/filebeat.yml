@@ -1,0 +1,29 @@
+---
+- name: Install apt https
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: Elastic GPG key is present
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: Add Filebeat repository
+  apt_repository:
+    repo: 'deb https://artifacts.elastic.co/packages/5.x/apt stable main'
+    state: present
+
+- name: Install Filebeat log exporter
+  apt:
+    name: filebeat
+    state: present
+
+- name: Configure Filebeat
+  template:
+    src: filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+
+- name: Run Filebeat
+  service:
+    name: filebeat
+    state: restarted

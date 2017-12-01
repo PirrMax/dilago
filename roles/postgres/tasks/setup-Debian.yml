@@ -1,0 +1,23 @@
+---
+- name: Add key on Debian
+  apt_key: url='https://www.postgresql.org/media/keys/ACCC4CF8.asc' state=present
+  when: ansible_os_family == 'Debian'
+
+- name: Add repository on Debian
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main' state=present
+  when: ansible_os_family == 'Debian'
+
+- name: Install PostgreSQL on Debian
+  apt: name=python-psycopg2,postgresql-{{ postgresql_version }} state=present update_cache=yes
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure all configured locales are present.
+  locale_gen: "name={{ item }} state=present"
+  with_items: "{{ postgresql_locales }}"
+  register: locale_gen_result
+
+- name: Force-restart PostgreSQL after new locales are generated.
+  service:
+    name: "{{ postgresql_daemon }}"
+    state: restarted
+  when: locale_gen_result.changed

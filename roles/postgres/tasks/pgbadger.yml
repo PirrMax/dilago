@@ -1,0 +1,4 @@
+- name: Install PGBadger log analyzer
+  apt:
+    name: pgbadger
+    state: present

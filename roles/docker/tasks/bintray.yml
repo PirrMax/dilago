@@ -1,0 +1,12 @@
+- name: docker-login | Log into private registry and force re-authorization
+  shell: docker login -u "{{ docker_user }}" -p "{{ docker_password }}" "{{ docker_registry }}"
+  register: login_out
+
+- name: docker-login | Result
+  debug:
+    msg: "{{ login_out.stdout }}"
+
+- user:
+    name: poweruser
+    groups: docker
+    append: yes

@@ -1,0 +1,32 @@
+---
+
+- name: Adding the DataStax repository key to the trusted keys
+  apt_key:
+    url: "https://www.apache.org/dist/cassandra/KEYS"
+    validate_certs: no
+    state: present
+
+- name: Adding the DataStax Community repository
+  apt_repository:
+    repo: '{{cassandra_apt_repo}}'
+    update_cache: yes
+    state: present
+
+- name: Adding backports repository
+  apt_repository:
+    repo: "deb http://http.debian.net/debian jessie-backports main"
+    update_cache: yes
+    state: present
+
+- name: Install dependencies
+  apt:
+    name: libcups2
+    state: present
+
+- name: Install java dependencies
+  command: "apt install -t jessie-backports -y openjdk-8-jre-headless ca-certificates-java"
+
+- name: Install Cassandra
+  apt:
+    name: '{{cassandra_apt_pkg}}'
+    state: installed

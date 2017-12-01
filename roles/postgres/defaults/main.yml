@@ -1,0 +1,151 @@
+---
+#postgresql_version: "9.6"
+
+postgresql_user: postgres
+postgresql_group: postgres
+
+postgresql_admin_user: "postgres"
+postgresql_default_auth_method: "trust"
+postgresql_pg_hba_passwd_hosts: []
+postgresql_pg_hba_trust_hosts: []
+postgresql_pg_hba_custom: []
+
+postgresql_unix_socket_directories:
+  - /var/run/postgresql
+
+# Global configuration options that will be set in postgresql.conf.
+postgresql_global_config_options:
+  - option: unix_socket_directories
+    value: '{{ postgresql_unix_socket_directories | join(",") }}'
+  - option: listen_addresses
+    value: "127.0.0.1"
+  - option: max_connections
+    value: 500
+  - option: shared_buffers
+    value: 512MB
+  - option: effective_cache_size
+    value: 1536MB
+  - option: work_mem
+    value: 2621kB
+  - option: maintenance_work_mem
+    value: 128MB
+  - option: min_wal_size
+    value: 2GB
+  - option: max_wal_size
+    value: 4GB
+  - option: checkpoint_completion_target
+    value: 0.9
+  - option: wal_buffers
+    value: 16MB
+  - option: default_statistics_target
+    value: 100
+  - option: logging_collector
+    value: on
+  - option: log_destination
+    value: 'stderr'
+  - option: log_filename
+    value: 'postgresql.log'
+  - option: log_checkpoints
+    value: on
+  - option: log_connections
+    value: on
+  - option: log_disconnections
+    value: on
+  - option: log_lock_waits
+    value: on
+  - option: log_temp_files
+    value: 0
+  - option: log_autovacuum_min_duration
+    value: 0
+  - option: log_error_verbosity
+    value: default
+  - option: log_min_duration_statement
+    value: 0
+  - option: log_line_prefix
+    value: '%t [%p]: [%l-1] db=%d,user=%u,app=%a,client=%h '
+
+# Debian only. Used to generate the locales used by PostgreSQL databases.
+postgresql_locales:
+  - 'en_US.UTF-8'
+
+# Databases to ensure exist.
+postgresql_databases:
+  - name: "{{ pg_dialog_db }}"
+    owner: "{{ pg_dialog_user }}"
+
+# Users to ensure exist.
+postgresql_users:
+  - name: "{{ pg_dialog_user }}"
+    password: "{{ pg_dialog_password }}"
+    role_attr_flags: "SUPERUSER"
+    db: "{{ pg_dialog_db }}"
+
+postgresql_pg_hba_default:
+  - { type: local, database: all, user: '{{ postgresql_admin_user }}', address: '', method: '{{ postgresql_default_auth_method }}', comment: '' }
+  - { type: local, database: all, user: all, address: '',             method: '{{ postgresql_default_auth_method }}', comment: '"local" is for Unix domain socket connections only' }
+  - { type: host,  database: all, user: all, address: '127.0.0.1/32', method: '{{ postgresql_default_auth_method }}', comment: 'IPv4 local connections:' }
+  - { type: host,  database: all, user: all, address: '::1/128',      method: '{{ postgresql_default_auth_method }}', comment: 'IPv6 local connections:' }
+
+# PGBouncer
+enable_pgbouncer: yes
+pgbouncer_conf_file: /etc/pgbouncer/pgbouncer.ini
+pgbouncer_install_pg_client: False
+pgbouncer_start_on_boot: True
+pgbouncer_auth_users:
+  - name: "{{ pg_dialog_user }}"
+    pass: "{{ pg_dialog_password }}"
+
+pgbouncer_logfile: /var/log/postgresql/pgbouncer.log
+pgbouncer_pidfile: /var/run/postgresql/pgbouncer.pid
+pgbouncer_listen_addr: "*"
+pgbouncer_listen_port: 6432
+pgbouncer_auth_type: trust
+pgbouncer_auth_file: /etc/pgbouncer/userlist.txt
+pgbouncer_admin_users: user2, someadmin, otheradmin
+pgbouncer_stats_users: stats, root
+pgbouncer_pool_mode: session
+pgbouncer_server_reset_query: DISCARD ALL
+pgbouncer_ignore_startup_parameters: extra_float_digits
+pgbouncer_server_check_query: select 1
+pgbouncer_server_check_delay: 30
+pgbouncer_max_client_conn: 100
+pgbouncer_default_pool_size: 20
+pgbouncer_reserve_pool_size: 5
+pgbouncer_reserve_pool_timeout: 3
+pgbouncer_max_db_connections: 50
+pgbouncer_max_user_connections: 50
+pgbouncer_log_connections: 1
+pgbouncer_log_disconnections: 1
+pgbouncer_log_pooler_errors: 1
+pgbouncer_server_round_robin: 0
+pgbouncer_server_lifetime: 1200
+pgbouncer_server_idle_timeout: 60
+pgbouncer_server_connect_timeout: 15
+pgbouncer_server_login_retry: 15
+pgbouncer_query_timeout: 0
+pgbouncer_query_wait_timeout: 0
+pgbouncer_client_idle_timeout: 0
+pgbouncer_client_login_timeout: 60
+pgbouncer_autodb_idle_timeout: 3600
+pgbouncer_pkt_buf: 2048
+pgbouncer_listen_backlog: 128
+pgbouncer_tcp_defer_accept: 0
+pgbouncer_tcp_socket_buffer: 0
+pgbouncer_tcp_keepalive: 1
+pgbouncer_tcp_keepcnt: 0
+pgbouncer_tcp_keepidle: 0
+pgbouncer_tcp_keepintvl: 0
+pgbouncer_dns_max_ttl: 15
+pgbouncer_dns_zone_check_period: 0
+pgbouncer_unix_socket_dir: /var/run/postgresql
+pgbouncer_database_aliases:
+  - name: dialog
+    host: 127.0.0.1
+    dbname: "{{ pg_dialog_db }}"
+    #port: 5432
+    user: "{{ pg_dialog_user }}"
+    password: "{{ pg_dialog_password }}"
+    client_encoding: utf-8
+    pool_size: 20
+    datastyle: ''
+    connect_query: ''
