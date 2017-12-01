@@ -1,0 +1,7 @@
+pg_dialog_user: dialog
+pg_dialog_password: dialog
+pg_dialog_db: dialog
+pg_port: "{{ pgbouncer_listen_port }}"
+
+cassandra_dialog_user: dialog
+cassandra_dialog_db: dialog
