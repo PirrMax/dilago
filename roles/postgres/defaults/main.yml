@@ -95,6 +95,7 @@ postgresql_pg_hba_default:
   - { type: local, database: all, user: all, address: '',             method: '{{ postgresql_default_auth_method }}', comment: '"local" is for Unix domain socket connections only' }
   - { type: host,  database: all, user: all, address: '127.0.0.1/32', method: '{{ postgresql_default_auth_method }}', comment: 'IPv4 local connections:' }
   - { type: host,  database: all, user: all, address: '::1/128',      method: '{{ postgresql_default_auth_method }}', comment: 'IPv6 local connections:' }
+#- { type: host, database: '{{ }}, user: '{{ }}', address: '{{ hostvars dialog server IP }}'}
 
 # PGBouncer
 enable_pgbouncer: yes
@@ -111,9 +112,10 @@ pgbouncer_logfile: /var/log/postgresql/pgbouncer.log
 pgbouncer_pidfile: /var/run/postgresql/pgbouncer.pid
 pgbouncer_listen_addr: "*"
 pgbouncer_listen_port: 6432
-pgbouncer_auth_type: md5
+pgbouncer_auth_type: hba
 pgbouncer_auth_file: /etc/pgbouncer/userlist.txt
-pgbouncer_admin_users: user2, someadmin, otheradmin
+pgbouncer_auth_hba_file: "{{ postgresql_config_path }}/pg_hba.conf"
+pgbouncer_admin_users: postgres
 pgbouncer_stats_users: stats, root
 pgbouncer_pool_mode: session
 pgbouncer_server_reset_query: DISCARD ALL

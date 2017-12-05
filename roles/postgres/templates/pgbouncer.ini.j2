@@ -5,9 +5,7 @@
 ;;   client_encoding= datestyle= timezone=
 ;;   pool_size= connect_query=
 [databases]
-{% for item in pgbouncer_database_aliases %}
-{{ item.name }} = {% if item.host is defined %}host={{ item.host }}{% endif %} {% if item.dbname is defined %} dbname={{ item.dbname }} {% endif %}{% if item.user is defined %} user={{ item.user }} {% endif %}
-{% endfor %}
+* = host=127.0.0.1 port=5432 auth_user=postgres
 
 ; foodb over unix socket
 ;foodb =
@@ -55,9 +53,11 @@ unix_socket_dir = {{ pgbouncer_unix_socket_dir }}
 
 ; any, trust, plain, crypt, md5
 auth_type = {{ pgbouncer_auth_type }}
-;auth_file = /8.0/main/global/pg_auth
+{% if pgbouncer_auth_type == 'md5' %}
 auth_file = {{ pgbouncer_auth_file }}
-
+{% elif pgbouncer_auth_type == 'hba' %}
+auth_hba_file = {{ pgbouncer_auth_hba_file }}
+{% endif %}
 ;;;
 ;;; Users allowed into database 'pgbouncer'
 ;;;
