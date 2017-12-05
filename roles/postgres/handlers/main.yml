@@ -1,3 +1,9 @@
 ---
 - name: restart postgresql
   service: "name={{ postgresql_daemon }} state=restarted sleep=5"
+
+- name: reload postgresql
+  service: "name={{ postgresql_daemon }} state=reloaded"
+
+- name: reload pgbouncer
+  service: "name={{ postgresql_daemon }} state=reloaded"
