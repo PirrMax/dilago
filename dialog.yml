@@ -1,25 +1,16 @@
 ---
 - hosts: postgresql
-
-# - hosts: pg-master
-#   become: true
-#   roles:
-#     - role: postgres
-
+- hosts: pg-master
+  become: true
+  roles:
+    - role: postgres
 - hosts: pg-slave
   become: true
   roles:
     - role: postgres
       postgresql_init_slave: true
-      #when: pg_slave
 
-# - hosts: cassandra
-#   become: true
-#   roles:
-#     - role: cassandra
-
-# - hosts: localhost
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - role: postgres
+- hosts: cassandra
+  become: true
+  roles:
+    - role: cassandra

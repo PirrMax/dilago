@@ -23,7 +23,7 @@ postgresql_global_config_options:
   - option: unix_socket_directories
     value: '{{ postgresql_unix_socket_directories | join(",") }}'
   - option: listen_addresses
-    value: "127.0.0.1"
+    value: "{{ ansible_default_ipv4.address }}"
   - option: max_connections
     value: 500
   - option: shared_buffers
@@ -94,7 +94,6 @@ postgresql_pg_hba_default:
   - { type: local, database: all, user: '{{ postgresql_admin_user }}', address: '', method: '{{ postgresql_default_auth_method }}', comment: '' }
   - { type: local, database: all, user: all, address: '',             method: '{{ postgresql_default_auth_method }}', comment: '"local" is for Unix domain socket connections only' }
   - { type: host,  database: all, user: all, address: '127.0.0.1/32', method: '{{ postgresql_default_auth_method }}', comment: 'IPv4 local connections:' }
-  - { type: host,  database: all, user: all, address: '::1/128',      method: '{{ postgresql_default_auth_method }}', comment: 'IPv6 local connections:' }
 #- { type: host, database: '{{ }}, user: '{{ }}', address: '{{ hostvars dialog server IP }}'}
 
 # PGBouncer
