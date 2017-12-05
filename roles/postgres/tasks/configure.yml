@@ -1,24 +1,48 @@
 ---
-- name: Configure pg_hba.conf
-  template:
-    src: pg_hba.conf.j2
-    dest: "{{ postgresql_config_path }}/pg_hba.conf"
-
-- name: Configure global settings.
-  lineinfile:
-    dest: "{{ postgresql_config_path }}/postgresql.conf"
-    regexp: "^#?{{ item.option }}.+$"
-    line: "{{ item.option }} = '{{ item.value }}'"
-    state: "{{ item.state | default('present') }}"
-  with_items: "{{ postgresql_global_config_options }}"
-  notify: restart postgresql
-
-- name: Ensure PostgreSQL unix socket dirs exist.
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ postgresql_user }}"
-    group: "{{ postgresql_group }}"
-    mode: 02775
-  with_items: "{{ postgresql_unix_socket_directories }}"
- 
+# - set_fact:
+#     pg_slave: true
+#   when: groups['pg-slave'][0] > 1
+#   ignore_errors: yes
+#
+# - name: Configure pg_hba.conf
+#   template:
+#     src: pg_hba.conf.j2
+#     dest: "{{ postgresql_config_path }}/pg_hba.conf"
+#
+# - name: Set master vars
+#   set_fact:
+#     postgresql_global_config_options: "{{ postgresql_global_config_options + [ {'option': item.key, 'value': item.value }] }}"
+#   with_dict:
+#     {
+#       wal_level: hot_standby,
+#       max_wal_senders: 2,
+#       wal_keep_segments: 10
+#     }
+#   when: pg_slave
+#   tags: master
+#
+# - name: Set slave vars
+#   set_fact:
+#     postgresql_global_config_options: "{{ postgresql_global_config_options + [ {'option': item.key, 'value': item.value }] }}"
+#   with_dict:
+#     { hot_standby: on }
+#   when: inventory_hostname in groups['pg-slave']
+#   tags: slave
+#
+# - name: Configure global settings.
+#   lineinfile:
+#     dest: "{{ postgresql_config_path }}/postgresql.conf"
+#     regexp: "^#?{{ item.option }}.+$"
+#     line: "{{ item.option }} = '{{ item.value }}'"
+#     state: "{{ item.state | default('present') }}"
+#   with_items: "{{ postgresql_global_config_options }}"
+#   notify: restart postgresql
+#
+# - name: Ensure PostgreSQL unix socket dirs exist.
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: "{{ postgresql_user }}"
+#     group: "{{ postgresql_group }}"
+#     mode: 02775
+#   with_items: "{{ postgresql_unix_socket_directories }}"

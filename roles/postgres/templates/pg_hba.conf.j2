@@ -33,6 +33,9 @@ host  all  all  {{host}}  password
 {% for host in postgresql_pg_hba_trust_hosts %}
 host  all  all  {{host}}  trust
 {% endfor %}
+{% if pg_slave %}
+host replication replicator {{ hostvars[groups['pg-slave'][0]]['ansible_default_ipv4']['address'] }}/32 trust
+{% endif %}
 
 # User custom
 {% for connection in postgresql_pg_hba_custom %}

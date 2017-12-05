@@ -3,12 +3,17 @@
 
 postgresql_user: postgres
 postgresql_group: postgres
+postgresql_rep_user: replicator
+postgresql_rep_password: replicator
 
 postgresql_admin_user: "postgres"
 postgresql_default_auth_method: "trust"
 postgresql_pg_hba_passwd_hosts: []
 postgresql_pg_hba_trust_hosts: []
 postgresql_pg_hba_custom: []
+
+pg_slave: false
+postgresql_init_slave: false
 
 postgresql_unix_socket_directories:
   - /var/run/postgresql
@@ -37,6 +42,8 @@ postgresql_global_config_options:
     value: 0.9
   - option: wal_buffers
     value: 16MB
+  - option: synchronous_commit
+    value: local
   - option: default_statistics_target
     value: 100
   - option: logging_collector
@@ -79,6 +86,9 @@ postgresql_users:
     password: "{{ pg_dialog_password }}"
     role_attr_flags: "SUPERUSER"
     db: "{{ pg_dialog_db }}"
+  - name: "{{ postgresql_rep_user }}"
+    password: "{{ postgresql_rep_password }}"
+    role_attr_flags: "replication"
 
 postgresql_pg_hba_default:
   - { type: local, database: all, user: '{{ postgresql_admin_user }}', address: '', method: '{{ postgresql_default_auth_method }}', comment: '' }
@@ -94,12 +104,14 @@ pgbouncer_start_on_boot: True
 pgbouncer_auth_users:
   - name: "{{ pg_dialog_user }}"
     pass: "{{ pg_dialog_password }}"
+  - name: "{{ postgresql_rep_user }}"
+    pass: "{{ postgresql_rep_password }}"
 
 pgbouncer_logfile: /var/log/postgresql/pgbouncer.log
 pgbouncer_pidfile: /var/run/postgresql/pgbouncer.pid
 pgbouncer_listen_addr: "*"
 pgbouncer_listen_port: 6432
-pgbouncer_auth_type: trust
+pgbouncer_auth_type: md5
 pgbouncer_auth_file: /etc/pgbouncer/userlist.txt
 pgbouncer_admin_users: user2, someadmin, otheradmin
 pgbouncer_stats_users: stats, root

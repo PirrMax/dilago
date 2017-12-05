@@ -1,4 +1,3 @@
-[dialog]
 [dialog:children]
 dialog-servers
 databases
@@ -24,7 +23,14 @@ postgresql
 cassandra
 
 
-[postgresql]
+[postgresql:children]
+pg-master
+pg-slave
+
+[pg-master]
+35.189.193.147
+[pg-slave]
+35.205.194.148
 
 [cassandra]
 
