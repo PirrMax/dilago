@@ -1,0 +1,15 @@
+version: '2'
+services:
+  dialog-server:
+    # image: use from docker-compose.image.yml
+    network_mode: host
+    environment:
+      - AWS_REGION=us-east-1
+    volumes:
+      - ./conf:/opt/docker/conf:ro
+      - ./data/server/files:/storage/files
+    ports:
+      - 127.0.0.1:9090:9090
+      - 127.0.0.1:9080:9080
+      - 127.0.0.1:9070:9070
+      - {{ ansible_default_ipv4.address }}:2552:2552

@@ -1,0 +1,45 @@
+---
+dlg_server_home_path: "/opt/dlg-server"
+dlg_server_conf_path: "{{ dlg_server_home_path }}/conf"
+
+# SMTP
+smtp_use: false #true/false dynamic matched
+smtp_host: ""
+smtp_port: ""
+smtp_from: ""
+smtp_user: ""
+smtp_password: ""
+smtp_tls:
+
+# AD
+ad_use: false #true/false dynamic matched
+ad_host: ""
+ad_port: ""
+ad_domain: ""
+ad_user: ""
+ad_password: ""
+ad_sync: "10s"
+
+# S3
+aws_use: false #true/false dynamic matched
+aws_endpoint: ""
+aws_bucket: ""
+aws_access: ""
+aws_secret: ""
+
+# Databases
+history_storage: "postgresql"
+sequence_storage: "cassandra"
+persistence_journal: "cassandra-journal"
+persistence_snapshot: "cassandra-snapshot-store"
+contacts_storage: "cassandra"
+access_interval_storage: "cassandra"
+message_status_storage: "cassandra"
+
+# PG
+pg_numThreads: 128
+
+# Cassandra
+# runtime append from group
+#cass_contact_points:
+#  - "{{ groups['cassandra'] }}"

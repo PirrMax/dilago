@@ -1,0 +1,4 @@
+---
+- name: compose changed
+  shell: "docker-compose -f {{ dlg_home }}/docker-compose.yml -f {{ dlg_home }}/docker-compose.image.yml up -d"
+  when: not first_install
