@@ -12,3 +12,14 @@
   service:
     name: cassandra
     state: restarted
+
+- name: Create cassandra user
+  shell: "cqlsh {{ ansible_default_ipv4.address }} -u cassandra -p cassandra --execute=\"CREATE USER {{ cassandra_dialog_user }} WITH PASSWORD '{{ cassandra_dialog_password }}';\""
+  when: inventory_hostname == groups['cassandra'][0]
+  ignore_errors: yes
+  changed_when: false
+  register: cass_user_out
+
+- fail:
+    msg: "{{ cass_user_out }}"
+  when: '"dialog already exists" not in cass_user_out.stderr'

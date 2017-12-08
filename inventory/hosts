@@ -34,6 +34,8 @@ pg-slave
 
 [cassandra]
 
+[endpoints]
+
 [endpoints:children]
 mobile
 desktop

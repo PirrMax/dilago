@@ -36,7 +36,7 @@
     line: "{{ item.option }} = '{{ item.value }}'"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ postgresql_global_config_options }}"
-   notify: restart postgresql
+  notify: restart postgresql
 
 - name: Ensure PostgreSQL unix socket dirs exist.
   file:

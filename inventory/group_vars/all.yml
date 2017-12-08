@@ -1,14 +1,13 @@
 project_name: "My EE"
 base_url: "example.com"
-server_license: ""
+server_license: "BIFBAAJAAEUMDYVF2ACREQAHENY2VNF23TZH6VHIH5EIQJ7ZHJV3XYSNIIQDQCA7PAC4LO642SDECLWKSOKIZ7FQKEENSB3ZBGTXY6LEMIQED5OIVRJM6E3FYI5Q4==="
 
 pg_dialog_user: dialog
 pg_dialog_password: dialog
 pg_dialog_db: dialog
-pg_host: "1.2.3.4" #"{{ hostvars[groups['pg-master']['ansible_default_ipv4']['address'] }}"
-pg_port: 1234 #"{{ pgbouncer_listen_port }}"
 
 cassandra_dialog_user: dialog
+cassandra_dialog_password: dialog
 cassandra_dialog_db: dialog
 
 http_scheme: "http"

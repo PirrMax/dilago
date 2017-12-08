@@ -1,45 +1,68 @@
 ---
-# - name: Create dlg home dir if not exist
-#   file:
-#     path: "{{ dlg_server_home_path }}"
-#     state: directory
-#
-# - name: Create conf dir if not exist
-#   file:
-#     path: "{{ dlg_server_conf_path }}"
-#     state: directory
-#
-# - stat:
-#     path: "{{ dlg_server_home_path }}/docker-compose.yml"
-#   register: compose_file
-#
-# - set_fact:
-#     first_install: true
-#   when: not compose_file.stat.exists
-#
-# - name: Create docker-compose file
-#   template:
-#     src: docker-compose.yml.j2
-#     dest: "{{ dlg_server_home_path }}/docker-compose.yml"
-#   #notify: compose changed
-#
-# - name: Configure SMTP
-#   set_fact:
-#     smtp_use: true
-#   when: smtp_password != "" and smtp_host != "" and smtp_port != "" and smtp_from != "" and smtp_user != ""
-# - name: Configure Acitve Directory
-#   set_fact:
-#     ad_use: true
-#   when: ad_host != "" and ad_port != "" and ad_domain != "" and ad_user != "" and ad_password != ""
-# - name: Configure AWS
-#   set_fact:
-#     aws_use: true
-#   when: aws_endpoint != "" and aws_bucket != "" and aws_access != "" and aws_secret != ""
+- name: gather facts from db servers
+  setup:
+  delegate_to: "{{item}}"
+  delegate_facts: True
+  with_items: "{{groups['databases']}}"
 
+- include_vars: "roles/postgres/defaults/main.yml"
+
+- name: Create dlg home dir if not exist
+  file:
+    path: "{{ dlg_server_home_path }}"
+    state: directory
+
+- name: Create control scripts
+  template:
+    src: "{{ item }}"
+    dest: "{{ dlg_server_home_path }}/{{ item }}"
+    mode: "u=rwx"
+  with_items:
+    - up.sh
+    - restart.sh
+
+- name: Create conf dir if not exist
+  file:
+    path: "{{ dlg_server_conf_path }}"
+    state: directory
+
+- stat:
+    path: "{{ dlg_server_home_path }}/docker-compose.yml"
+  register: compose_file
+
+- set_fact:
+    first_install: true
+  when: not compose_file.stat.exists
+
+- name: Create docker-compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ dlg_server_home_path }}/docker-compose.yml"
+  notify: compose changed
+- name: Set dialog server image
+  template:
+    src: docker-compose.image.yml.j2
+    dest: "{{ dlg_server_home_path }}/docker-compose.image.yml"
+
+# Configure modules
+- name: Configure SMTP
+  set_fact:
+    smtp_use: true
+  when: smtp_password != "" and smtp_host != "" and smtp_port != "" and smtp_from != "" and smtp_user != ""
+- name: Configure Acitve Directory
+  set_fact:
+    ad_use: true
+  when: ad_host != "" and ad_port != "" and ad_domain != "" and ad_user != "" and ad_password != ""
+- name: Configure AWS
+  set_fact:
+    aws_use: true
+  when: aws_endpoint != "" and aws_bucket != "" and aws_access != "" and aws_secret != ""
+
+# Create cassandra points
 - set_fact:
     contact_points: []
 - set_fact:
-    contact_points: "{{ contact_points }} + [ '{{ item }}' ]"
+    contact_points: "{{ contact_points }} + [ '{{ hostvars[item]['ansible_default_ipv4']['address'] }}' ]"
   with_items: "{{ groups['cassandra'] }}"
 - set_fact:
     cass_contact_points: "{{ contact_points }}"
@@ -49,22 +72,22 @@
     src: server.conf.j2
     dest: "{{ dlg_server_home_path }}/conf/server.conf"
   register: server_conf
-#
-# - name: Set server java opts
-#   template:
-#     src: application.ini
-#     dest: "{{ dlg_server_home_path }}/conf/application.ini"
-#   register: app_ini
-#
-# - name: Set server logback
-#   template:
-#     src: logback.xml
-#     dest: "{{ dlg_server_home_path }}/conf/logback.xml"
-#
-# - name: Apply configs
-#   shell: "docker-compose -f {{ dlg_server_home_path }}/docker-compose.image.yml restart dialog-server"
-#   when: server_conf.changed or app_ini.changed and not first_install
-#
-# - name: Up dialog server
-#   shell: "docker-compose -f {{ dlg_server_home_path }}/docker-compose.yml -f {{ dlg_server_home_path }}/docker-compose.image.yml up -d"
-#   when: first_install
+
+- name: Set server java opts
+  template:
+    src: application.ini
+    dest: "{{ dlg_server_home_path }}/conf/application.ini"
+  register: app_ini
+
+- name: Set server logback
+  template:
+    src: logback.xml
+    dest: "{{ dlg_server_home_path }}/conf/logback.xml"
+
+- name: Apply configs
+  shell: "docker-compose -f {{ dlg_server_home_path }}/docker-compose.image.yml restart dialog-server"
+  when: server_conf.changed or app_ini.changed and not first_install
+
+- name: Up dialog server
+  shell: "docker-compose -f {{ dlg_server_home_path }}/docker-compose.yml -f {{ dlg_server_home_path }}/docker-compose.image.yml up -d"
+  when: first_install

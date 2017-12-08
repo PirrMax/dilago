@@ -1,21 +1,54 @@
 ---
-# - hosts: postgresql
-# - hosts: pg-master
-#   become: true
-#   roles:
-#     - role: postgres
-# - hosts: pg-slave
-#   become: true
-#   roles:
-#     - role: postgres
-#       postgresql_init_slave: true
-#
-# - hosts: cassandra
-#   become: true
-#   roles:
-#     - role: cassandra
+- hosts: dialog-servers
+- hosts: postgresql
+
+- hosts: pg-master
+  become: true
+  roles:
+    - role: postgres
+      postgresql_pg_hba_custom:
+        - { type: host,
+            database: "{{ pg_dialog_db }}",
+            user: "{{ pg_dialog_user }}",
+            address: "{{ hostvars[groups['dialog-servers'][0]]['ansible_default_ipv4']['address'] }}/32",
+            method: "md5" }
+
+- hosts: pg-slave
+  become: true
+  roles:
+    - role: postgres
+      postgresql_init_slave: true
+
+- hosts: cassandra
+  strategy: free
+  become: true
+  roles:
+    - role: cassandra
 
 - hosts: dialog-servers
   become: true
   roles:
     - role: dlg-server
+      # TODO
+      # postgres_hosts: "{{groups['postgres']}}"
+      # cassandra_hosts: "{{groups['cassandra']}}"
+
+- hosts: endpoints
+  become: true
+  roles:
+    - role: haproxy
+      haproxy_frontend:
+        - name: tcp
+          bind:
+            - listen: ':9970'
+          mode: tcp
+          default_backend: tcp_dlg
+      haproxy_backend:
+        - name: tcp_dlg
+          mode: tcp
+          balance: roundrobin
+          server:
+            - name: "dlg-server-1"
+              listen: "{{ groups['dialog-servers'][0] }}:9070"
+              param:
+                - check
