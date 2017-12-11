@@ -47,8 +47,20 @@
         - name: tcp_dlg
           mode: tcp
           balance: roundrobin
-          server:
-            - name: "dlg-server-1"
-              listen: "{{ groups['dialog-servers'][0] }}:9070"
+          servers_group:
+            - name: "tcp_dlg"
+              group: "{{ groups['dialog-servers'] }}"
+              port: 9070
               param:
                 - check
+            # - name: "dlg-stg"
+            #   group: "{{ groups['dialog-servers'] }}"
+            #   port: 9070
+            #   param:
+            #     - check
+            #     - param
+          # server:
+          #   - name: "dlg-server-1"
+          #     listen: "1.2.3.4:9070"
+          #     param:
+          #       - check

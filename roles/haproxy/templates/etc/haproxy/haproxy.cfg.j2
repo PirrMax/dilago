@@ -2,14 +2,13 @@
 
 global
 {% include 'global.cfg.j2' %}
-
 defaults
 {% include 'defaults.cfg.j2' %}
-
 {% include 'userlist.cfg.j2' %}
-
 {% include 'listen.cfg.j2' %}
-
 {% include 'frontend.cfg.j2' %}
-
-{% include 'backend.cfg.j2' %}
+{% if haproxy_backend[0].server is defined %}
+{% include 'backend_direct.cfg.j2' %}
+{% elif haproxy_backend[0].servers_group is defined %}
+{% include 'backend_group.cfg.j2' %}
+{% endif %}
