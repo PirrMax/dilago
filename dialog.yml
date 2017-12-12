@@ -25,6 +25,36 @@
   roles:
     - role: cassandra
 
+- hosts: etcd-masters
+  become: true
+  roles:
+    - role: etcd-cluster
+      etcd_master_group_name: etcd-masters
+      etcd_cluster_name: dlg-etcd
+      etcd_secure: false
+      when: dlg_cluster
+- hosts: etcd-lb
+  become: true
+  roles:
+    - role: haproxy
+      haproxy_frontend:
+        - name: tcp
+          bind:
+            - listen: ':2378'
+          mode: http
+          default_backend: etcd
+      haproxy_backend:
+        - name: etcd
+          mode: http
+          balance: roundrobin
+          servers_group:
+            - name: "etcd"
+              group: "{{ groups['etcd'] }}"
+              port: 2379
+              param:
+                - check
+      when: dlg_cluster
+
 - hosts: dialog-servers
   become: true
   roles:

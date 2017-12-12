@@ -1,5 +1,6 @@
 [dialog:children]
 dialog-servers
+etcd
 databases
 endpoints
 web
@@ -17,6 +18,14 @@ prometheus
 ###
 
 [dialog-servers]
+
+[etcd:children]
+etcd-masters
+etcd-lb
+
+[etcd-lb]
+
+[etcd-masters]
 
 [databases:children]
 postgresql

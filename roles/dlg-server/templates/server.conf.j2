@@ -20,6 +20,7 @@ akka.http.client.parsing.max-response-reason-length = 2048
 akka.actor.default-dispatcher.fork-join-executor.parallelism-min = 128
 akka.actor.default-dispatcher.fork-join-executor.parallelism-max = 500
 
+
 # Auto join
 # modules.groups.auto-join: [ID]
 
@@ -31,9 +32,24 @@ modules.metrics.consumers = ["im.dlg.metrics.PrometheusConsumer"]
 # modules.groups.resolve-url-preifx = "/@"
 
 # Cluster
+{% if not dlg_cluster %}
 single-mode = true
 modules.reconfiguration.storage = im.dlg.server.config.contrib.NoOpStorage
+{% else %}
+single-mode = false
+akka.remote.netty.tcp.hostname = "{{ ansible_default_ipv4.address }}"
+akka.remote.netty.tcp.port = 2552
+akka.remote.netty.tcp.bind-hostname = "{{ ansible_default_ipv4.address }}"
+akka.remote.netty.tcp.bind-port = 2552
 
+# modules.reconfiguration.storage = "im.dlg.server.config.contrib.NoOpStorage"
+constructr.coordination.host = "{{ hostvars[groups['etcd-lb'][0]]['ansible_default_ipv4']['address'] }}"
+constructr.coordination.port = 2378
+services.etcd.host = "{{ hostvars[groups['etcd-lb'][0]]['ansible_default_ipv4']['address'] }}"
+services.etcd.port = 2378
+services.etcd.config-key = "dialog-config"
+services.etcd.default-timeout = 5s
+{% endif %}
 
 modules.validation.username-password.provider = "im.dlg.server.auth.validation.InternalPasswordValidationProvider"
 # Activasions
