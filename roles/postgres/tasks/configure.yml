@@ -1,8 +1,6 @@
 ---
 - set_fact:
-    pg_slave: true
-  when: groups['pg-slave'][0] > 1
-  ignore_errors: yes
+    pg_slave: "{{ true if groups['pg-slave'] | length  >= 1 else false}}"
 
 - name: Configure pg_hba.conf
   template:
