@@ -12,12 +12,13 @@ ceph
 [logging:children]
 elk
 
-[monitoring]
+[monitoring:children]
 prometheus
 
 ###
 
 [dialog-servers]
+146.148.117.235
 
 [etcd:children]
 etcd-masters
@@ -37,13 +38,14 @@ pg-master
 pg-slave
 
 [pg-master]
-
+104.155.42.131
 [pg-slave]
 
-
 [cassandra]
+35.205.61.168
 
 [endpoints]
+35.187.113.114
 
 [endpoints:children]
 mobile
@@ -57,3 +59,4 @@ desktop
 [turns]
 [ceph]
 [elk]
+[prometheus]

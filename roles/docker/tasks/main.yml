@@ -45,5 +45,5 @@
   when: vagrant
 
 - name: login bintray
-  include: bintray.yml
-  when: bintray
+  include: private_registry.yml
+  when: docker_password is defined and docker_password != ""

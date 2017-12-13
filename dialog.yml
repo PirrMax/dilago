@@ -1,11 +1,13 @@
 ---
-- hosts: dialog-servers
-- hosts: postgresql
+- hosts: all
+  tags: always
 
 - hosts: pg-master
   become: true
   roles:
     - role: postgres
+      enable_pgbouncer: true
+      pgbouncer_listen_port: "{{ pg_dialog_port }}"
       postgresql_pg_hba_custom:
         - { type: host,
             database: "{{ pg_dialog_db }}",
@@ -59,20 +61,22 @@
   become: true
   roles:
     - role: dlg-server
-      project_name: "My ee"
+      dlg_server_image: dialog-docker-registry.bintray.io/server:latest
+      project_name: "My Dialog"
+      server_license: ""
       dlg_custom_conf:
         session.idle-timeout: 5 minutes
         modules.sequence.weak-history-updates: true
-        akka.log-dead-letters-during-shutdown: off
-        modules.presence.deliver-state-interval: 10m
-        modules.sequence.max-difference-size: 300 KiB
-        modules.runtime.delivery.max-interval: 5 minutes
+        akka.log-dead-letters-during-shutdown: "off"
+        modules.presence.deliver-state-interval: "10m"
+        modules.sequence.max-difference-size: "300 KiB"
+        modules.runtime.delivery.max-interval: "5 minutes"
         akka.http.client.parsing.max-response-reason-length: 2048
         akka.actor.default-dispatcher.fork-join-executor.parallelism-min: 128
         akka.actor.default-dispatcher.fork-join-executor.parallelism-max: 500
-      # TODO
-      # postgres_hosts: "{{groups['postgres']}}"
-      # cassandra_hosts: "{{groups['cassandra']}}"
+      postgres_hosts: "{{groups['postgresql']}}"
+      cassandra_hosts: "{{groups['cassandra']}}"
+      tags: 'dialog-server'
 
 - hosts: endpoints
   become: true
@@ -84,6 +88,11 @@
             - listen: ':9970'
           mode: tcp
           default_backend: tcp_dlg
+        - name: ws
+          bind:
+            - listen: ':9980'
+          mode: http
+          default_backend: ws_dlg
       haproxy_backend:
         - name: tcp_dlg
           mode: tcp
@@ -94,14 +103,19 @@
               port: 9070
               param:
                 - check
-            # - name: "dlg-stg"
-            #   group: "{{ groups['dialog-servers'] }}"
-            #   port: 9070
-            #   param:
-            #     - check
-            #     - param
+        - name: ws_dlg
+          mode: http
+          balance: roundrobin
+          servers_group:
+            - name: "ws_dlg"
+              group: "{{ groups['dialog-servers'] }}"
+              port: 9080
+              param:
+                - check
+          # OR
           # server:
           #   - name: "dlg-server-1"
           #     listen: "1.2.3.4:9070"
           #     param:
           #       - check
+      tags: 'endpoints'

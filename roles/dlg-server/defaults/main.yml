@@ -38,9 +38,9 @@ access_interval_storage: "cassandra"
 message_status_storage: "cassandra"
 
 # PG
-pg_host: "{{ hostvars[groups['pg-master'][0]]['ansible_default_ipv4']['address'] }}"
-pg_port: "{{ pgbouncer_listen_port }}"
-pg_numThreads: 128
+pg_host: "{{ pg_dialog_host }}"
+pg_port: "{{ pg_dialog_port }}"
+pg_numThreads: 16
 
 # Cassandra
 # runtime append from group

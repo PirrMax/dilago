@@ -8,18 +8,32 @@
 #- include: service.yml
 #  tags: [cassandra, cassandra-service]
 
-- name: Force restart
-  service:
-    name: cassandra
-    state: restarted
+# - name: Force restart
+#   service:
+#     name: cassandra
+#     state: restarted
 
-- name: Create cassandra user
-  shell: "cqlsh {{ ansible_default_ipv4.address }} -u cassandra -p cassandra --execute=\"CREATE USER {{ cassandra_dialog_user }} WITH PASSWORD '{{ cassandra_dialog_password }}';\""
+- name: Test login
+  shell: "cqlsh {{ ansible_default_ipv4.address }} -u {{ cassandra_dialog_user }} -p {{ cassandra_dialog_password }} --execute=\"SELECT now() FROM system.local;\""
   when: inventory_hostname == groups['cassandra'][0]
   ignore_errors: yes
   changed_when: false
-  register: cass_user_out
+  register: test_login_out
 
-- fail:
-    msg: "{{ cass_user_out }}"
-  when: '"dialog already exists" not in cass_user_out.stderr'
+- name: Create cassandra user
+  shell: "cqlsh {{ ansible_default_ipv4.address }} -u cassandra -p cassandra --execute=\"CREATE USER {{ cassandra_dialog_user }} WITH PASSWORD '{{ cassandra_dialog_password }}';\""
+  when: inventory_hostname == groups['cassandra'][0] and '"Bad credentials" in test_login_out.stderr' and test_login_out.rc != 0
+  ignore_errors: yes
+  changed_when: false
+  register: cass_user_create_out
+
+- name: Update password to cassandra user
+  shell: "cqlsh {{ ansible_default_ipv4.address }} -u cassandra -p cassandra --execute=\"ALTER USER {{ cassandra_dialog_user }} WITH PASSWORD '{{ cassandra_dialog_password }}';\""
+  when: inventory_hostname == groups['cassandra'][0] and '"{{ cassandra_dialog_user }} already exists" in cass_user_create_out.stderr' and test_login_out.rc == 1
+  ignore_errors: yes
+  changed_when: false
+  register: cass_user_password_out
+
+- name: Test login
+  shell: "cqlsh {{ ansible_default_ipv4.address }} -u {{ cassandra_dialog_user }} -p {{ cassandra_dialog_password }} --execute=\"SELECT now() FROM system.local;\""
+  changed_when: false
