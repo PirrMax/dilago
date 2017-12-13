@@ -5,13 +5,13 @@ license = "{{ server_license }}"
 
 # Secure
 secret = "mysupersecuresecret"
-modules.crypto.server-key.secret = "e4347bb04818d16a47f6fb2926632906f4498d74e859e9c4b1eee74524fb0302"
-modules.crypto.server-key.public = "8f75fadf7562db90153ecf698d185381b41dcc1f0b7d76f66aef15a3fbfad60c"
+modules.crypto.server-key.secret = "{{crypto_server_secret }}"
+modules.crypto.server-key.public = "{{ crypto_server_public }}"
 modules.crypto.storage = "cassandra"
 
 # Custom options
 {% for key, value in dlg_custom_conf.iteritems() %}
-{{ key }} = {{ value }}
+{{ key }} = "{{ value }}"
 {% endfor %}
 
 # Auto join

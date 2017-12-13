@@ -3,6 +3,9 @@ dlg_server_home_path: "/opt/dlg-server"
 dlg_server_conf_path: "{{ dlg_server_home_path }}/conf"
 dlg_server_image: ""
 
+crypto_server_secret: "e4347bb04818d16a47f6fb2926632906f4498d74e859e9c4b1eee74524fb0302" # public demo
+crypto_server_public: "8f75fadf7562db90153ecf698d185381b41dcc1f0b7d76f66aef15a3fbfad60c" # public demo
+
 # SMTP
 smtp_use: false #true/false dynamic matched
 smtp_host: ""
