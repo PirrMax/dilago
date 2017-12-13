@@ -9,17 +9,10 @@ modules.crypto.server-key.secret = "e4347bb04818d16a47f6fb2926632906f4498d74e859
 modules.crypto.server-key.public = "8f75fadf7562db90153ecf698d185381b41dcc1f0b7d76f66aef15a3fbfad60c"
 modules.crypto.storage = "cassandra"
 
-# Tunes
-session.idle-timeout = 5 minutes
-modules.sequence.weak-history-updates = true
-akka.log-dead-letters-during-shutdown = off
-modules.presence.deliver-state-interval = 10m
-modules.sequence.max-difference-size = 300 KiB
-modules.runtime.delivery.max-interval = 5 minutes
-akka.http.client.parsing.max-response-reason-length = 2048
-akka.actor.default-dispatcher.fork-join-executor.parallelism-min = 128
-akka.actor.default-dispatcher.fork-join-executor.parallelism-max = 500
-
+# Custom options
+{% for key, value in dlg_custom_conf.iteritems() %}
+{{ key }} = {{ value }}
+{% endfor %}
 
 # Auto join
 # modules.groups.auto-join: [ID]
