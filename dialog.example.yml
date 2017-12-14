@@ -88,7 +88,7 @@
       haproxy_frontend:
         - name: tcp
           bind:
-            - listen: ':9970'
+            - listen: ':{{ mobile_port }}'
       #        param:
       #          - ssl
       #          - 'crt /etc/haproxy/ssl/cert.pem'
@@ -96,7 +96,7 @@
           default_backend: tcp_dlg
         - name: ws
           bind:
-            - listen: ':9980'
+            - listen: ':{{ desktop_port }}'
           mode: http
           default_backend: ws_dlg
       haproxy_backend:
