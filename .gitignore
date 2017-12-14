@@ -1,1 +1,4 @@
 *.retry
+inventory/hosts
+dialog.yml
+vars.yml
