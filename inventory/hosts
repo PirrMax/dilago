@@ -6,14 +6,12 @@ endpoints
 web
 turns
 
-[storage:children]
-ceph
-
-[logging:children]
-elk
-
-[monitoring:children]
-prometheus
+#[storage:children]
+#ceph
+#[logging:children]
+#elk
+#[monitoring:children]
+#prometheus
 
 ###
 
@@ -22,37 +20,30 @@ prometheus
 [etcd:children]
 etcd-masters
 etcd-lb
-
 [etcd-lb]
-
 [etcd-masters]
 
 [databases:children]
 postgresql
 cassandra
 
-
 [postgresql:children]
 pg-master
 pg-slave
-
 [pg-master]
 [pg-slave]
-
 [cassandra]
 
 [endpoints]
-
 [endpoints:children]
-mobile
-desktop
-
-[mobile]
-[desktop]
+mobile-endpoints
+desktop-endpoints
+[mobile-endpoints]
+[desktop-endpoints]
 
 [web]
-
 [turns]
-[ceph]
-[elk]
-[prometheus]
+
+#[ceph]
+#[elk]
+#[prometheus]
