@@ -82,10 +82,16 @@
   become: true
   roles:
     - role: haproxy
+      #haproxy_ssl_map:
+      #  - src: "{{ playbook_dir }}/files/haproxy/ssl/cert.pem"
+      #    dest: "/etc/haproxy/ssl/cert.pem"
       haproxy_frontend:
         - name: tcp
           bind:
             - listen: ':9970'
+      #        param:
+      #          - ssl
+      #          - 'crt /etc/haproxy/ssl/cert.pem'
           mode: tcp
           default_backend: tcp_dlg
         - name: ws
