@@ -125,3 +125,8 @@
           #     param:
           #       - check
       tags: 'endpoints'
+
+- hosts: web-backend
+  become: true
+  roles:
+    - role: dlg-web
