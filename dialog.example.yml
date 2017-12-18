@@ -62,7 +62,6 @@
   roles:
     - role: dlg-server
       dlg_server_image: dialog-docker-registry.bintray.io/server:latest
-      project_name: "My Dialog"
       server_license: ""
       dlg_custom_conf:
         session.idle-timeout: 5 minutes

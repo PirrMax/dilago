@@ -45,6 +45,8 @@ services.etcd.default-timeout = 5s
 {% endif %}
 
 modules.validation.username-password.provider = "im.dlg.server.auth.validation.InternalPasswordValidationProvider"
+
+{% if activation_enable %}
 # Activasions
 modules.activation.repeat-limit = 1m
 modules.activation.code-expiration = 1 day
@@ -53,9 +55,28 @@ modules.activation.internal.sender-user-id = 10
 modules.activation.internal.online-time-window = 10m
 modules.activation.internal.message-template = "Your Dialog activation code: $$CODE$$"
 
-modules.activation.providers.internal = im.dlg.server.auth.activation.internal.InternalCodeProvider
-modules.activation.providers.sms = im.dlg.server.auth.activation.infobip.InfoBipProvider
-modules.activation.providers.smtp = im.dlg.server.auth.activation.smtp.SMTPProvider
+{% if dummy_providers %}
+modules.activation.providers.sms = "{{ dummy_provider }}"
+modules.activation.providers.email = "{{ dummy_provider }}"
+modules.activation.providers.smtp = "{{ dummy_provider }}"
+{% else %}
+modules.activation.providers.sms = {{ sms_providers[sms_provider] }}
+modules.activation.providers.smtp = "{{ smtp_provider }}"
+{% endif %}
+
+{% if not dummy_providers%}
+{% if sms_provider == "infobip" %}
+services.infobip.username = "{{ infobip_username }}"
+services.infobip.password = "{{ infobip_password }}"
+services.infobip.from = "{{ infobip_from }}"
+services.infobip.template = "{{ infobip_template }}"
+{% endif %}
+{% if sms_provider == "telesign" %}
+services.telesign.customer-id = "{{ telesign_customer_id }}"
+services.telesign.api-key = "{{ telesign_api_key }}"
+{% endif %}
+{% endif %}
+{% endif %}
 
 {% if smtp_use %}
 # SMTP

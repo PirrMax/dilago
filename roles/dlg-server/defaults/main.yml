@@ -31,6 +31,26 @@ aws_bucket: ""
 aws_access: ""
 aws_secret: ""
 
+# Activation providers
+activation_enable: false
+dummy_providers: true
+sms_provider: "infobip"
+sms_providers:
+  infobip: "im.dlg.server.auth.activation.infobip.InfoBipProvider"
+  telesign: "im.dlg.server.auth.activation.telesign.TelesignProvider"
+dummy_provider: "im.dlg.server.auth.activation.dummy.DummyActivationProvider"
+smtp_provider: "im.dlg.server.auth.activation.smtp.SMTPProvider"
+
+# infobip if infobip provider
+infobip_username: "username"
+infobip_password: "password"
+infobip_from: "{{ project_name }}"
+infobip_template: "Your {{ project_name }} activation code is $$CODE$$"
+
+# telesign if telesign provider
+telesign_customer_id: ""
+telesign_api_key: ""
+
 # Databases
 history_storage: "postgresql"
 sequence_storage: "cassandra"
