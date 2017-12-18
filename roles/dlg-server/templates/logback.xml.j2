@@ -27,7 +27,7 @@
     <graylogHost>{{ logstash_host }}</graylogHost>
     <originHost>{{ ansible_hostname }}</originHost>
     <additionalField>application={{ project_name }}</additionalField>
-    <additionalField>environment={{ environment }}</additionalField>
+    <additionalField>environment={{ dlg_environment }}</additionalField>
     <mdcIncluded>true</mdcIncluded>
   </appender>
 

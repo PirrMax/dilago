@@ -72,4 +72,4 @@ pg_numThreads: 16
 
 # Logging
 logstash_host: "logstash.example.com"
-environment: "unknown"
+dlg_environment: "unknown"
