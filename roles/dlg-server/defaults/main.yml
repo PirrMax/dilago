@@ -69,3 +69,7 @@ pg_numThreads: 16
 # runtime append from group
 #cass_contact_points:
 #  - "{{ groups['cassandra'] }}"
+
+# Logging
+logstash_host: "logstash.example.com"
+environment: "unknown"

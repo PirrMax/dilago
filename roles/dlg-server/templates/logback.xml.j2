@@ -24,10 +24,10 @@
   </appender>
 
   <appender name="LOGSTASH" class="com.github.pukkaone.gelf.logback.GelfAppender">
-    <graylogHost>logstash.transmit.im</graylogHost>
-    <originHost>dialog-server</originHost>
-    <additionalField>application=Dialog Stress</additionalField>
-    <additionalField>environment=stress</additionalField>
+    <graylogHost>{{ logstash_host }}</graylogHost>
+    <originHost>{{ ansible_hostname }}</originHost>
+    <additionalField>application={{ project_name }}</additionalField>
+    <additionalField>environment={{ environment }}</additionalField>
     <mdcIncluded>true</mdcIncluded>
   </appender>
 

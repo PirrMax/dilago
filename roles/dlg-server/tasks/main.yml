@@ -95,7 +95,7 @@
 
 - name: Set server logback
   template:
-    src: logback.xml
+    src: logback.xml.j2
     dest: "{{ dlg_server_home_path }}/conf/logback.xml"
 
 - name: Up dialog server
