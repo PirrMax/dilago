@@ -55,6 +55,7 @@ modules.activation.internal.sender-user-id = 10
 modules.activation.internal.online-time-window = 10m
 modules.activation.internal.message-template = "Your Dialog activation code: $$CODE$$"
 
+modules.activation.providers.internal = im.dlg.server.auth.activation.internal.InternalCodeProvider
 {% if dummy_providers %}
 modules.activation.providers.sms = "{{ dummy_provider }}"
 modules.activation.providers.email = "{{ dummy_provider }}"
