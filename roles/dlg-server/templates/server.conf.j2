@@ -10,9 +10,7 @@ modules.crypto.server-key.public = "{{ crypto_server_public }}"
 modules.crypto.storage = "cassandra"
 
 # Custom options
-{% for key, value in dlg_custom_conf.iteritems() %}
-{{ key }} = "{{ value }}"
-{% endfor %}
+{{ dlg_custom_conf }}
 
 # Auto join
 # modules.groups.auto-join: [ID]
