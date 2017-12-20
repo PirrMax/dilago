@@ -72,4 +72,5 @@ pg_numThreads: 16
 
 # Logging
 logstash_host: "logstash.example.com"
+log_level: "DEBUG"
 dlg_environment: "unknown"

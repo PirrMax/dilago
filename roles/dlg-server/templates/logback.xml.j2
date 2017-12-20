@@ -31,7 +31,7 @@
     <mdcIncluded>true</mdcIncluded>
   </appender>
 
-  <root level="ERROR">
+  <root level="{{ log_level }}">
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="LOGSTASH"/>
   </root>
