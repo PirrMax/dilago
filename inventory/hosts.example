@@ -42,6 +42,12 @@ desktop-endpoints
 [desktop-endpoints]
 
 [web]
+[web:children]
+web-frontend
+web-backend
+[web-frontend]
+[web-backend]
+
 [turns]
 
 #[ceph]

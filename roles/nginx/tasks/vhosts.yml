@@ -12,8 +12,6 @@
     state: directory
   notify: reload nginx
 
-- debug:
-    var: extra_parameters
 - name: Add managed vhost config files.
   template:
     src: "{{ item.template|default(nginx_vhost_template) }}"

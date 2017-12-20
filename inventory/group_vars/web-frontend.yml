@@ -1,0 +1,35 @@
+# api by locations
+nginx_dialog_extra: |
+  resolver                8.8.4.4 8.8.8.8 valid=300s;
+  resolver_timeout        10s;
+  proxy_set_header        Host $http_host;
+  proxy_set_header        X-Scheme $scheme;
+  proxy_set_header        X-Frame-Options DENY;
+  proxy_set_header        X-Real-IP $remote_addr;
+  proxy_set_header        X-Content-Type-Options nosniff;
+  proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+
+  location /v1 {
+    proxy_set_header      Host {{ api_uri }};
+    proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_pass            http://dialog-9090;
+  }
+  location /api {
+    proxy_set_header      Host {{ api_uri }};
+    proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_pass            http://dialog-9090;
+  }
+
+  location /dash {
+    proxy_set_header      Host {{ dashboard_uri }};
+    rewrite               ^/dash$ {{http_scheme}}://{{dashboard_uri}}/dash/ permanent;
+    rewrite               ^/dash/(.*) /$1 break;
+    proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_pass            http://{{ hostvars[groups['web-backend'][0]]['ansible_default_ipv4']['address'] }}:8082;
+  }
+
+  location /config {
+    proxy_set_header      Host {{ dashboard_uri }};
+    proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_pass            {{http_scheme}}://{{ hostvars[groups['web-backend'][0]]['ansible_default_ipv4']['address'] }}:8082;
+  }

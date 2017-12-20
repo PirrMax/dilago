@@ -5,22 +5,22 @@
     image: "{{ dlg_web_app_image }}"
     pull: yes
     state: started
-    restart: yes
+    restart_policy: always
     ports:
       - "{{ dlg_web_app_port }}:80"
   tags: dlg-web-app
 
 - name: Run dlg-invites
   docker_container:
-    name: dlg-web-app
-    image: "{{ dlg_web_app_image }}"
+    name: dlg-invites
+    image: "{{ dlg_invites_image }}"
     pull: yes
     state: started
-    restart: yes
+    restart_policy: always
     env: "{{ dlg_invites_envs }}"
     ports:
       - "{{ dlg_invites_port }}:8080"
-    tags: dlg-invites
+  tags: dlg-invites
 
 - name: Run dlg-dashboard
   docker_container:
@@ -28,7 +28,7 @@
     image: "{{ dlg_dashboard_image }}"
     pull: yes
     state: started
-    restart: yes
+    restart_policy: always
     env: "{{ dlg_dashboard_envs }}"
     ports:
       - "{{ dlg_dashboard_port }}:3000"

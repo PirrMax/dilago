@@ -60,9 +60,17 @@ http {
 {% if upstream.strategy is defined %}
         {{ upstream.strategy }};
 {% endif %}
+
+{% if upstream.servers_group is defined %}
+{% for server in upstream.servers_group %}
+        server {{hostvars[server]['ansible_default_ipv4']['address']}}:{{ upstream.port }};
+{% endfor %}
+{% else %}
 {% for server in upstream.servers %}
         server {{ server }};
 {% endfor %}
+{% endif %}
+
 {% if upstream.keepalive is defined %}
         keepalive {{ upstream.keepalive }};
 {% endif %}
