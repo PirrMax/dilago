@@ -1,6 +1,10 @@
 project_name: "My Dialog"
 base_url: "example.com"
 
+api_uri: "{{ base_url }}"
+dashboard_uri: "{{ base_url }}"
+
+
 mobile_port: 9970
 desktop_port: 9980
 ssl_mobile_port: 7443
@@ -17,8 +21,6 @@ cassandra_dialog_password: dialog
 cassandra_dialog_db: dialog
 
 http_scheme: "http"
-# tcp_scheme: "tcp"
-# ws_scheme: "ws"
 
 # Private registry
 docker_registry: "dialog-docker-registry.bintray.io"

@@ -1,17 +1,17 @@
 ---
 dlg_web_app_port: 8080
-dlg_web_app_image: ""
+dlg_web_app_image: "dialog-docker-ee-registry.bintray.io/web-app:latest"
 
 dlg_dashboard_port: 8082
-dlg_dashboard_image: ""
+dlg_dashboard_image: "dialog-docker-ee-registry.bintray.io/dashboard:latest"
 dlg_dashboard_envs:
   ENDPOINT: http://dialog-server:9090
-  DASHBOARD_REGISTRATION_ENABLE: true
-  DASHBOARD_REGISTRATION_ENDPOINT: http://dialog-server:9090
-  DASHBOARD_REGISTRATION_AUTH: "admin:password"
+  #DASHBOARD_REGISTRATION_ENABLE: true
+  #DASHBOARD_REGISTRATION_ENDPOINT: http://dialog-server:9090
+  #DASHBOARD_REGISTRATION_AUTH: "admin:password"
 
 dlg_invites_port: 8081
-dlg_invites_image: ""
+dlg_invites_image: "dialog-docker-ee-registry.bintray.io/invites:latest"
 dlg_invites_envs:
   ENDPOINT: http://dialog-server:9090
   ENDPOINT_AUTH: "admin:password"
